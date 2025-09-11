@@ -5,11 +5,28 @@ const { sendResponse } = require("../utils/response");
 exports.signup = async (req, res, next) => {
     try {
         
-        if(!req.body){
-            return sendResponse(res, false, "Request body is missing", null)
+        if(!req.body){            
+            return sendResponse(res,{
+                resp: 0,
+                msg: 'Request body is missing'
+            });
         }
-        if(req.body.email === undefined || req.body.mobile === undefined || req.body.name === undefined){
-            return sendResponse(res, false, "Name, mobile and email are required", null)
+        if(req.body.email === undefined || req.body.mobile === undefined || req.body.name === undefined){            
+            return sendResponse(res,{
+                resp: 0,
+                msg: 'Name, mobile and email are required'
+            });
+        }
+
+        const findUser = await User.findOne({
+            where: { email: req.body.email },
+        });
+
+        if(findUser) {
+            return sendResponse(res,{
+                resp: '0',
+                msg: 'Email already exists'
+            });
         }
 
         const token = jwt.sign(
@@ -34,19 +51,33 @@ exports.signup = async (req, res, next) => {
             token: token
         };
 
-        return sendResponse(res, true, "User created successfully", responseData);
+        return sendResponse(res,{
+            resp: '1',
+            msg: 'User created successfully',
+            data: responseData
+        });
     } catch (err) {
-        return sendResponse(res, false, err.message, null);
+        return sendResponse(res,{
+            resp: 0,
+            msg: err.message
+        });
     }
 };
 
 exports.getUsers = async (req, res, next) => {
-  try {
-    const users = await User.findAll();
-    return sendResponse(res, true, "User list fetched successfully", users);
-  } catch (err) {
-    return sendResponse(res, false, err.message, null);
-  }
+    try {
+        const users = await User.findAll();
+        return sendResponse(res,{
+            resp: '1',
+            msg: 'User list fetched successfully',
+            data: users
+        });
+    } catch (err) {
+        return sendResponse(res,{
+            resp: 0,
+            msg: err.message
+        });
+    }
 };
 
 exports.login = async (req, res, next) => {
@@ -55,7 +86,10 @@ exports.login = async (req, res, next) => {
       where: { mobile: req.body.mobile },
     });
     if (!user) {
-      return sendResponse(res, false, "User not found", null);
+        return sendResponse(res,{
+            resp: '0',
+            msg: 'User not found'
+        });
     }
     const token = jwt.sign(
         { id: user.id, mobile: user.mobile },
@@ -69,10 +103,16 @@ exports.login = async (req, res, next) => {
         mobile: user.mobile,
         token: token
     };
-    return sendResponse(res, true, "Login successful", responseData);
-
+    
+    return sendResponse(res,{
+        resp: '1',
+        msg: 'Login successful',
+        data: responseData
+    });
   } catch (err) {
-    console.log('err',err);
-    return sendResponse(res, false, err.message, null);
+    return sendResponse(res,{
+        resp: 0,
+        msg: err.message
+    });
   }
 };

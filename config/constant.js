@@ -1,6 +1,7 @@
 const publicRoutes = [
   "/app/users/signup",
-  "/app/users/login"
+  "/app/users/login",
+  "/app/users/test-error",
 ];
 
 const debugUsers = [

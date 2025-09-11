@@ -13,8 +13,7 @@ const authMiddleware = (req, res, next) => {
 
     // Debug mode bypass
     if (process.env.DEBUG === 'True' && debugUsers.includes(req.mobile)) {
-        next();
-        return;
+        // write some logic here
     }
     
     // JWT check
