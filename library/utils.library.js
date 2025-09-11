@@ -26,5 +26,9 @@ exports.verifyRequest = (req, options = []) => {
     }
   
     return resp;
-  };
+};
+
+exports.encrypt = async (req, options) => {
+    
+}
   
