@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendResponse } = require("../utils/response");
 const { verifyRequest } = require("../library/utils.library");
+const { pagination } = require("../utils/paginationHelper");
 
 exports.signup = async (req, res, next) => {
     try {        
@@ -59,11 +60,23 @@ exports.signup = async (req, res, next) => {
 
 exports.getUsers = async (req, res, next) => {
     try {
-        const users = await User.findAll();
+
+        const { pageNumber, pageSize, offset, sortBy, order } = pagination(req.query, ["createdAt"]);
+
+        const { count, rows } = await User.findAndCountAll({
+            offset,
+            limit: pageSize,
+            order: [[sortBy, order]],
+            attributes: ["id", "name", "email", "createdAt"] 
+        });
+      
         return sendResponse(res,{
             resp: '1',
             msg: 'User list fetched successfully',
-            data: users
+            data:  {
+                records: rows,
+                pagination: { totalRecords: count, pageNumber, totalPages: Math.ceil(count / pageSize), pageSize, sortBy, order }
+            }
         });
     } catch (err) {
         return sendResponse(res,{
