@@ -69,13 +69,27 @@ exports.getUsers = async (req, res, next) => {
             order: [[sortBy, order]],
             attributes: ["id", "name", "email", "createdAt"] 
         });
+
+        if(!rows || rows.length == 0) {
+            return sendResponse(res,{
+                resp: '0',
+                msg: 'No users found',
+                data:  null
+            });
+        }
       
         return sendResponse(res,{
             resp: '1',
             msg: 'User list fetched successfully',
             data:  {
                 records: rows,
-                pagination: { totalRecords: count, pageNumber, totalPages: Math.ceil(count / pageSize), pageSize, sortBy, order }
+                pagination: { 
+                    totalRecords: count, pageNumber, 
+                    totalPages: Math.ceil(count / pageSize), 
+                    pageSize, 
+                    sortBy, 
+                    order
+                }
             }
         });
     } catch (err) {

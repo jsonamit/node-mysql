@@ -6,7 +6,11 @@ const User = sequelize.define("user", {
     name: { type: DataTypes.STRING, allowNull: false },
     mobile: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, unique: true, allowNull: false },
-    token: { type: DataTypes.STRING, unique: true, allowNull: false }
+    token: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true
+    }
 },{
     defaultScope: {
         attributes: { exclude: ["token"] }  //hide sensitive fields globally
