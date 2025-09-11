@@ -1,21 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendResponse } = require("../utils/response");
+const { verifyRequest } = require("../library/utils.library");
 
 exports.signup = async (req, res, next) => {
-    try {
-        
-        if(!req.body){            
-            return sendResponse(res,{
-                resp: 0,
-                msg: 'Request body is missing'
-            });
-        }
-        if(req.body.email === undefined || req.body.mobile === undefined || req.body.name === undefined){            
-            return sendResponse(res,{
-                resp: 0,
-                msg: 'Name, mobile and email are required'
-            });
+    try {        
+
+        const valid = verifyRequest(req,['mobile','email','name']);
+        if(!valid.resp) {
+            return res.json(valid);
         }
 
         const findUser = await User.findOne({
@@ -82,8 +75,12 @@ exports.getUsers = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
+    const valid = verifyRequest(req,['mobile']);
+    if(!valid.resp) {
+        return res.json(valid);
+    }
     const user = await User.findOne({
-      where: { mobile: req.body.mobile },
+        where: { mobile: req.body.mobile },
     });
     if (!user) {
         return sendResponse(res,{
@@ -103,7 +100,7 @@ exports.login = async (req, res, next) => {
         mobile: user.mobile,
         token: token
     };
-    
+
     return sendResponse(res,{
         resp: '1',
         msg: 'Login successful',
