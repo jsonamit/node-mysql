@@ -6,6 +6,8 @@ const User = sequelize.define("user", {
     name: { type: DataTypes.STRING, allowNull: false },
     mobile: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, unique: true, allowNull: false },
+    otp: { type: DataTypes.STRING, allowNull: true },
+    otpExpiry: { type: DataTypes.DATE, allowNull: true },
     token: {
         type: DataTypes.STRING(255),
         allowNull: false,
@@ -13,7 +15,7 @@ const User = sequelize.define("user", {
     }
 },{
     defaultScope: {
-        attributes: { exclude: ["token"] }  //hide sensitive fields globally
+        attributes: { exclude: ["token","otp","otpExpiry"] }  //hide sensitive fields globally
     }
 });
 

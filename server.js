@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require('helmet');
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const sequelize = require("./connection/db");
@@ -14,6 +15,8 @@ const mainRoutes = require("./routes/index");
 
 const app = express();
 
+// Use helmet middleware
+app.use(helmet());
 
 app.use(cors());
 app.use(express.json());
